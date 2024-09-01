@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collatz Conjecture Graph</title>
+    <style>
+        #chart {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Collatz Conjecture Graph</h1>
+    <label for="numberInput">Enter a number:</label>
+    <input type="number" id="numberInput" min="1">
+    <button onclick="generateGraph()">Generate Graph</button>
+    <div id="chart"></div>
+
+    <script>
+        function generateGraph() {
+            const num = parseInt(document.getElementById('numberInput').value);
+            if (isNaN(num) || num < 1) {
+                alert('Please enter a positive integer.');
+                return;
+            }
+
+            // Collatz Conjecture sequence
+            const sequence = [];
+            let current = num;
+            while (current !== 1) {
+                sequence.push(current);
+                if (current % 2 === 0) {
+                    current /= 2;
+                } else {
+                    current = 3 * current + 1;
+                }
+            }
+            sequence.push(1);
+
+            // Draw the graph
+            const canvas = document.createElement('canvas');
+            document.getElementById('chart').innerHTML = '';
+            document.getElementById('chart').appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+
+            // Scale the canvas
+            canvas.width = document.getElementById('chart').clientWidth;
+            canvas.height = 400;
+
+            const max = Math.max(...sequence);
+            const min = Math.min(...sequence);
+            const xScale = canvas.width / sequence.length;
+            const yScale = canvas.height / (max - min);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - (sequence[0] - min) * yScale);
+
+            for (let i = 1; i < sequence.length; i++) {
+                ctx.lineTo(i * xScale, canvas.height - (sequence[i] - min) * yScale);
+            }
+
+            ctx.strokeStyle = 'blue';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+
+            // Add labels
+            ctx.font = '16px Arial';
+            ctx.fillStyle = 'black';
+            ctx.fillText('Collatz Conjecture Sequence', 10, 20);
+        }
+    </script>
+</body>
+</html>
